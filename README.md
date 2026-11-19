@@ -4,6 +4,7 @@ Shamol eroziyasi va atmosferaning changlanishini monitoring qilish va bashoratla
 
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24374626.svg)](https://doi.org/10.5281/zenodo.24374626)
 
 ## Tavsif
 
