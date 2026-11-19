@@ -1,0 +1,19 @@
+DustFlow — hisoblash hisoboti
+============================================================
+Stsenariy      : 01_yoz_kuchli_boron
+Shamol tezligi : 12.0 m/s, yo'nalish 40.0°
+To'r           : 60x60x30
+Hisoblash davri: 6.0 soat
+Sxema          : aniq  (aniq — 2-tartib, tezkor — 1-tartib)
+Cho'kish       : re  (re — f(Re), stoks — Stoks qonuni)
+C_alpha        : 0.01
+------------------------------------------------------------
+chiqqan massa                     307.72 ming tonna
+chokkan massa                     166.51 ming tonna
+chegaradan chiqqan                 70.07 ming tonna
+atmosferada yutilgan                1.01 ming tonna
+sohada muallaq                     66.45 ming tonna
+------------------------------------------------------------
+balans nomuvofiqligi             2.14076 %
+yuza konsentratsiyasi             1173.0 mkg/m3 (o'rtacha)
+                                  4164.4 mkg/m3 (maksimal)

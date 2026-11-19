@@ -1,0 +1,77 @@
+{
+  "id": "04_kuz_quruq",
+  "nom": "Kuzgi quruq davr",
+  "tavsif": "Vegetatsiya tugagan, oʻsimlik qoplami siyrak",
+  "sana": "2025-10-08",
+  "mavsum": "kuz",
+  "soha": {
+    "lon": [
+      61.5,
+      66.0
+    ],
+    "lat": [
+      38.5,
+      42.0
+    ]
+  },
+  "maydonlar": {
+    "u10": {
+      "fayl": "meteo.nc",
+      "format": "netcdf",
+      "ozgaruvchi": "u10",
+      "manba": "ERA5, 0.25°",
+      "usul": "interp"
+    },
+    "v10": {
+      "fayl": "meteo.nc",
+      "format": "netcdf",
+      "ozgaruvchi": "v10",
+      "manba": "ERA5, 0.25°",
+      "usul": "interp"
+    },
+    "namlik": {
+      "fayl": "meteo.nc",
+      "format": "netcdf",
+      "ozgaruvchi": "swvl1",
+      "manba": "ERA5-Land / SMAP, 0.25°",
+      "usul": "interp"
+    },
+    "relyef": {
+      "fayl": "relyef.tif",
+      "format": "geotiff",
+      "manba": "SRTM, 0.01°",
+      "usul": "ortala"
+    },
+    "qoplam": {
+      "fayl": "qoplam.tif",
+      "format": "geotiff",
+      "manba": "MODIS LAI, 0.05°",
+      "usul": "avto"
+    },
+    "gil": {
+      "fayl": "tuproq.tif",
+      "format": "geotiff",
+      "manba": "SoilGrids, 0.05°",
+      "usul": "avto"
+    },
+    "z0": {
+      "fayl": "z0.tif",
+      "format": "geotiff",
+      "manba": "MODIS Land Cover, 0.05°",
+      "usul": "avto"
+    },
+    "A_ef": {
+      "fayl": "A_ef.tif",
+      "format": "geotiff",
+      "manba": "MODIS Land Cover, 0.05°",
+      "usul": "avto"
+    }
+  },
+  "tavsiya": {
+    "T_soat": 12,
+    "dt": 120.0,
+    "N": 60,
+    "M": 60,
+    "L": 20
+  }
+}

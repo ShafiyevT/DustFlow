@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "Agar ushbu dasturdan foydalansangiz, iltimos, quyidagicha iqtibos keltiring."
+type: software
+title: "DustFlow: shamol eroziyasi natijasida havo changlanishini modellashtiruvchi dasturiy majmua"
+version: 2.0.0
+authors:
+  - family-names: Bobojonova
+    given-names: Madina
+    affiliation: "Buxoro davlat universiteti"
+  - family-names: Shafiyev
+    given-names: Tursun
+    affiliation: "Buxoro davlat universiteti"
+license: MIT
+repository-code: "https://github.com/ShafiyevT/DustFlow"
+abstract: >-
+  Shamol eroziyasi natijasida chang emissiyasi, uning atmosferada ko'chishi, diffuziyasi
+  va cho'kishini uch o'lchovli sohada hisoblaydi. ERA5-Land, SoilGrids 2.0,
+  Copernicus DEM, ESA WorldCover va CAMS ma'lumotlarini hisoblash to'riga keltiradi.
+  Vaqt bo'yicha birinchi va ikkinchi tartibli ikki hisoblash rejimiga ega.
+keywords:
+  - shamol eroziyasi
+  - chang aerozoli
+  - atmosfera changlanishi
+  - matematik modellashtirish
+  - Buxoro

@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dustflow"
+version = "2.0.0"
+description = "Shamol eroziyasi va atmosferaning changlanishini bashoratlash majmuasi"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [{name = "Bobojonova M.A."}, {name = "Shafiyev T.R."}]
+dependencies = ["numpy>=1.21", "matplotlib>=3.5"]
+
+[tool.setuptools.packages.find]
+include = ["dustflow*"]
