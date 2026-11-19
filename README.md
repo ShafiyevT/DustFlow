@@ -299,7 +299,7 @@ hisobot("natijalar/hisobot.txt", m, st)
 `ivbob_hisob/` papkasidagi skriptlar dissertatsiyaning IV bobidagi barcha hisob va rasmlarni qayta bajaradi. Bularga 2025-yil 28–30-aprel chang bo'roni, C_α ni kalibrlash, sezgirlik tahlili, stansiyalar va CAMS bilan taqqoslash hamda qurilish maydoni hisobi kiradi:
 
 ```bash
-python ivbob_hisob/hammasi.py          # s01 … s08, taxminan 1,5 soat (2 yadro)
+python ivbob_hisob/hammasi.py          # s01 … s10, taxminan 2 soat (2 yadro)
 ```
 
 Kirish ma'lumotlari `haqiqiy_malumot/` papkasida bo'lishi kerak:
@@ -312,6 +312,8 @@ Kirish ma'lumotlari `haqiqiy_malumot/` papkasida bo'lishi kerak:
 Ular hajmi katta bo'lgani uchun repozitoriyga kiritilmagan. Ularni `malumot_yuklash.py` bilan yuklab olish mumkin (`YORIQNOMA_malumot.md` ga qarang). Natijalar `ivbob_natija/` ga yoziladi: `hisobot.txt`, `rasm_4_*.png`, `*.json`.
 
 8-qadam (`s08_vakillik.py`) dissertatsiyaning 2-ilovasidagi tahlilni bajaradi. U har bir stansiya bo'yicha alohida statistikani hamda vakillik va vaqt siljishi tahlilini (stansiya atrofidagi 3×3 va 5×5 yacheyka, −6…+6 soat siljish) `vakillik.txt` va `vakillik.json` ga yozadi. Buning uchun 2-qadam stansiya atrofidagi 5×5 yacheykadagi qiymatlarni `boron_{variant}_qoshni.pkl` ga saqlaydi.
+
+9–11-qadamlar CMES maqolasi uchun. `s09_bir_moda.py` 48 soatlik bo'ronni besh transport fraksiyasi bilan va 0,2–100 µm oralig'ini qamragan bitta effektiv moda bilan hisoblaydi. U ularning massa balansi va yer sirti konsentratsiyasini `bir_moda_taqqoslash.txt` va `bir_moda_taqqoslash.json` ga yozadi. `s10_maqola_rasmlari.py` maqolaning 3, 4, 6–10-rasmlarini `ivbob_natija/maqola/` ga (PNG va 300 dpi TIFF) chizadi.
 
 Shamol maydonining vertikal tashkil etuvchisi uzluksizlik tenglamasidan yer sirtidan yuqoriga integrallab topiladi. Yuqori chegara orqali havo oqimi cheklanmaydi. Bu advektiv shakldagi sxemada massa balansini saqlaydi: 2025-yil aprel bo'roni hisobida nomuvofiqlik 1 % dan kichik.
 

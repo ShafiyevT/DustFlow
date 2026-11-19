@@ -8,6 +8,8 @@ Natijalar: ivbob_natija/ (JSON, PNG) va ivbob_natija/hisobot.txt.
 Taxminiy vaqt (2 yadroli kompyuter): 1-qadam 1 daq., 2-qadam 30 daq. (ikki variant parallel),
 3-qadam 20 daq., 5-qadam 20 daq., qolganlari 1 daq.
 8-qadam: stansiyalar bo'yicha batafsil tahlil (dissertatsiyaning 2-ilovasi).
+9–11-qadamlar: besh fraksiya va bitta moda taqqoslanishi hamda CMES maqolasi rasmlari
+(9-qadam ~25 daq., ikki variant parallel).
 """
 import os, sys, subprocess, time
 B = os.path.dirname(os.path.abspath(__file__)); PY = sys.executable
@@ -18,7 +20,10 @@ QADAM = {1: [["s01_kesh.py"]],
          5: [["s05_qurilish.py", "tarqalish"]],
          6: [["s06_rasmlar.py"]],
          7: [["s07_hisobot.py"]],
-         8: [["s08_vakillik.py"]]}
+         8: [["s08_vakillik.py"]],
+         9: [["s09_bir_moda.py", "besh"], ["s09_bir_moda.py", "bir"]],
+         10: [["s09_bir_moda.py", "taqqosla"]],
+         11: [["s10_maqola_rasmlari.py"]]}
 tanlov = [int(a) for a in sys.argv[1:]] or sorted(QADAM)
 os.makedirs(os.path.join(os.path.dirname(B), "ivbob_natija"), exist_ok=True)
 for q in tanlov:

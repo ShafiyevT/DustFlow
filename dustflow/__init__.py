@@ -13,7 +13,7 @@ Modullar:
     balance   — massa balansini nazorat qilish
     viz       — natijalarni vizuallashtirish
 """
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 from .grid import Tor, relyef_yarat
 from .emission import emissiya_maydoni, fraksiya_ulushlari
