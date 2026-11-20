@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-"""10-qadam. CMES maqolasi rasmlari (Fig. 3, 4, 6-10), ingliz tilida.
+"""10-qadam. CMES maqolasi rasmlari, ingliz tilida, jurnaldagi bosma o'lchamida.
 
     python ivbob_hisob/s10_maqola_rasmlari.py
 
-Talab qiladi: s02 (mahalliy), s03, s04, s09 natijalari. Natija: ivbob_natija/maqola/Fig*.png, *.tif
+Talab qiladi: s02 (mahalliy), s03, s04, s09 natijalari. Natija: ivbob_natija/maqola/ da
+maqoladagi raqamlar bilan: Fig2-Fig5 (asosiy matn), FigS2, FigS4 (qo'shimcha material)
+va Fig_sezgirlik (maqolaga kirmagan, Jadval 4 bilan bir xil ma'lumot); har biri PNG 300 dpi
+va TIFF 900 dpi (RGB). Fig1, FigS1 va FigS3 boshqa manbadan.
 """
 import os, sys, json, pickle, datetime as dt
 import numpy as np, pandas as pd
@@ -13,35 +16,60 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.patheffects as pe
 from matplotlib.colors import LogNorm, TwoSlopeNorm
 from dustflow import emission as E
 from dustflow.velocity import stoks_tezligi, chokish_tezligi
 
 N_ = U.NATIJA
 OUT = os.path.join(N_, "maqola"); os.makedirs(OUT, exist_ok=True)
-plt.rcParams.update({"font.family": "Liberation Sans", "font.size": 10, "axes.linewidth": 0.9,
+plt.rcParams.update({"font.family": "Liberation Sans", "font.size": 8, "axes.linewidth": 0.9,
                      "mathtext.fontset": "dejavusans"})
 RED, BLUE, GREY, ORANGE, GREEN = "#b03a2e", "#1f4e79", "#9e9e9e", "#e67e22", "#2e7d32"
 NAMES = {"bukhara": "Bukhara", "navoi": "Navoi", "navoiy": "Navoi", "karshi": "Karshi", "qarshi": "Karshi",
          "Buxoro": "Bukhara", "Navoiy": "Navoi", "Qarshi": "Karshi"}
 
 
+# Rasmlar jurnaldagi bosma o'lchamida chiziladi (eni, dyuym), shunda yozuvlar 8-11 pt bo'ladi (TSP talabi)
+BOSMA = {(9.6, 3.4): 5.6, (11, 4.6): 6.0, (10.5, 3.6): 5.8, (10.5, 8.6): 5.2, (8.6, 3.6): 5.0, (11, 3.8): 6.0}
+_subplots = plt.subplots
+
+
+def _bosma_subplots(*a, figsize=None, **k):
+    if figsize is not None:
+        s = BOSMA.get(tuple(figsize), figsize[0]) / figsize[0]; figsize = (figsize[0] * s, figsize[1] * s)
+    return _subplots(*a, figsize=figsize, **k)
+
+
+plt.subplots = _bosma_subplots
+
+
+# ichki raqam (funksiya nomi) -> maqoladagi rasm nomi
+NOMI = {3: "FigS2", 4: "Fig2", 6: "Fig3", 7: "FigS4", 8: "Fig4", 9: "Fig_sezgirlik", 10: "Fig5"}
+
+
 def _save(fig, n):
-    fig.savefig(f"{OUT}/Fig{n}.png", dpi=300)
-    fig.savefig(f"{OUT}/Fig{n}.tif", dpi=300, pil_kwargs={"compression": "tiff_lzw"})
+    """PNG 300 dpi (qo'lyozma uchun) va TIFF 900 dpi, RGB, alfa kanalsiz (TSP talabi)."""
+    from PIL import Image
+    nom = NOMI[n]
+    fig.savefig(f"{OUT}/{nom}.png", dpi=300, facecolor="white")
+    tmp = f"{OUT}/{nom}_tmp.png"
+    fig.savefig(tmp, dpi=900, facecolor="white")
+    Image.open(tmp).convert("RGB").save(f"{OUT}/{nom}.tif", compression="tiff_lzw", dpi=(900, 900))
+    os.remove(tmp)
     plt.close(fig)
 
 
 def _panel(ax, s):
-    ax.text(-0.12, 1.04, s, transform=ax.transAxes, fontsize=13, weight="bold")
+    ax.text(-0.14, 1.07, f"({s.lower()})", transform=ax.transAxes, fontsize=10, weight="bold", va="bottom")
 
 
 def _stations(ax, ext, col="k"):
     for s, (nm, la, lo) in U.STANSIYA.items():
-        ax.plot(lo, la, "*", color="w", mec=col, ms=10, mew=0.9)
+        ax.plot(lo, la, "*", color="w", mec=col, ms=7, mew=0.8)
         right = lo > ext[1] - 0.7
-        ax.text(lo + (-0.12 if right else 0.12), la + 0.10, NAMES.get(s, NAMES.get(nm, nm)), fontsize=8.5, color=col,
-                ha="right" if right else "left")
+        ax.text(lo + (-0.12 if right else 0.12), la + 0.10, NAMES.get(s, NAMES.get(nm, nm)), fontsize=7.5, color=col,
+                ha="right" if right else "left", path_effects=[pe.withStroke(linewidth=2.2, foreground="w")])
 
 
 def fig3():
@@ -51,7 +79,7 @@ def fig3():
         F = E.vertikal_oqim(E.gorizontal_oqim(us, ut), 5.0, 0.0, C_alpha=U.C_ALPHA)
         ax[0].semilogy(us, np.where(F > 0, F, np.nan), color=c, lw=1.8, label=rf"$u_{{*t}}^{{eff}}$ = {ut:.2f} m/s")
     ax[0].set_ylim(1e-9, 1e-4); ax[0].set_xlabel(r"Friction velocity $u_*$ (m/s)")
-    ax[0].set_ylabel(r"Vertical dust flux $F$ (kg m$^{-2}$ s$^{-1}$)"); ax[0].legend(fontsize=8.5, frameon=False)
+    ax[0].set_ylabel(r"Dust flux $F$ (kg m$^{-2}$ s$^{-1}$)"); ax[0].legend(fontsize=7, frameon=False, loc="upper left"); ax[0].set_ylim(top=3e-2)
     cl = np.linspace(0, 35, 400)
     ax[1].semilogy(cl, U.C_ALPHA * E.sandblast_koeffitsiyenti(cl), "k", lw=1.8)
     ax[1].axvline(20, color="k", ls=":", lw=1); ax[1].text(21, 2e-5, "cap at 20%", color="#555", fontsize=9)
@@ -71,19 +99,18 @@ def fig4():
     for c in ch: ax[0].axvline(c * 1e6, color=GREY, ls="--", lw=0.9)
     for k in range(5):
         xm = np.sqrt(ch[k] * ch[k + 1]) * 1e6
-        ax[0].text(xm, 0.58 + 0.04 * (k % 2), f"{p[k]:.3f}", color=RED, fontsize=8.5, ha="center")
-    ax[0].text(0.15, 0.66, "Mass share:", color=RED, fontsize=8.5)
+        ax[0].text(xm, 0.70, f"{p[k]:.3f}", color=RED, fontsize=7, ha="center", va="top", rotation=90)
     ax[0].set_ylim(0, 0.72); ax[0].set_xlabel("Diameter (µm)"); ax[0].set_ylabel(r"$dM/d\ln d$ (normalized)")
     rho = np.array([1500.0, 2000.0, 2200.0, 2400.0, 2600.0]); dm = np.sqrt(ch[:-1] * ch[1:])
     dd = np.logspace(-7, np.log10(2e-4), 200)
-    ax[1].loglog(dd * 1e6, stoks_tezligi(dd, 2500.0) * 100, color=GREY, lw=1.2, label=r"Stokes, $\rho_p$ = 2500 kg/m$^3$")
+    ax[1].loglog(dd * 1e6, stoks_tezligi(dd, 2500.0) * 100, color=GREY, lw=1.2, label="Stokes law")
     ax[1].loglog(dd * 1e6, [chokish_tezligi(x, 2500.0, qarshilik="re") * 100 for x in dd], color=BLUE, lw=1.6,
-                 label=r"with $f(Re)$, $\rho_p$ = 2500 kg/m$^3$")
+                 label=r"with $f(Re)$")
     ws = np.array([chokish_tezligi(x, r, qarshilik="re") for x, r in zip(dm, rho)]) * 100
     ax[1].loglog(dm * 1e6, ws, "o", color=RED, ms=7, label="Transport fractions")
-    for x, y in zip(dm * 1e6, ws): ax[1].text(x * 1.15, y * 0.6, f"{y:.3g}", fontsize=8.5)
+    for x, y in zip(dm * 1e6, ws): ax[1].text(x * 1.15, y * 0.6, f"{y:.3g}", fontsize=7.5)
     ax[1].set_xlabel("Diameter (µm)"); ax[1].set_ylabel(r"Settling velocity $w_s$ (cm/s)")
-    ax[1].legend(fontsize=8.5, frameon=False, loc="upper left")
+    ax[1].legend(fontsize=7, frameon=False, loc="upper left")
     _panel(ax[0], "A"); _panel(ax[1], "B"); fig.tight_layout(); _save(fig, 4)
 
 
@@ -115,9 +142,9 @@ def fig7():
     for k, lab, col in (("Q_em", "Emitted", "k"), ("Q_cho", "Dry-deposited", RED), ("Q_chiq", "Exported", BLUE),
                         ("Q", "Airborne", ORANGE), ("Q_yut", "Scavenged", GREEN), ("kesilgan", "Undershoot zeroing", GREY)):
         ax[0].plot(q.t, q[k] / 1e6, color=col, lw=1.8, label=lab)
-    ax[0].set_ylabel("Mass (kt)"); ax[0].legend(fontsize=8.5, frameon=False, ncol=2)
+    ax[0].set_ylabel("Mass (kt)"); ax[0].legend(fontsize=7, frameon=False, ncol=1, loc="upper left")
     r = q[q.Q_em > 0.01 * q.Q_em.max()]                   # emissiya sezilarli bo'lgan davr
-    ax[1].plot(r.t, r.nisbiy, "k", lw=1.5); ax[1].set_ylabel("Relative budget residual (%)")
+    ax[1].plot(r.t, r.nisbiy, "k", lw=1.5); ax[1].set_ylabel("Budget residual (%)")
     ax[1].set_ylim(0, max(1.0, r.nisbiy.max() * 1.25)); ax[1].set_xlim(q.t.iloc[0], q.t.iloc[-1])
     for a in ax:
         a.xaxis.set_major_locator(mdates.HourLocator(byhour=[0, 12]))
@@ -140,12 +167,12 @@ def fig8():
     plt.colorbar(im, ax=ax[2], shrink=0.9, label="(single − five) / five (%)")
     for a in ax[:3]:
         _stations(a, ext, "#0b3d66"); a.set_xlabel("Longitude (°E)"); a.set_ylabel("Latitude (°N)")
-    k = ["chokkan", "chegaradan", "havoda"]; lab = ["Dry-deposited", "Exported", "Airborne"]; x = np.arange(3)
+    k = ["chokkan", "chegaradan", "havoda"]; lab = ["Deposited", "Exported", "Airborne"]; x = np.arange(3)
     for o, (v, col, nm) in enumerate((("besh", RED, "Five fractions"), ("bir", BLUE, "Single mode"))):
         vals = [T[v][kk] for kk in k]
         ax[3].bar(x + (o - 0.5) * 0.38, vals, 0.38, color=col, label=nm)
-        for xx, vv in zip(x + (o - 0.5) * 0.38, vals): ax[3].text(xx, vv + 8, f"{vv:.0f}", ha="center", fontsize=8.5)
-    ax[3].set_xticks(x); ax[3].set_xticklabels(lab); ax[3].set_ylabel("Mass after 48 h (kt)"); ax[3].legend(frameon=False)
+        for xx, vv in zip(x + (o - 0.5) * 0.38, vals): ax[3].text(xx, vv + 8, f"{vv:.0f}", ha="center", fontsize=7.5)
+    ax[3].set_xticks(x); ax[3].set_xticklabels(lab); ax[3].set_ylabel("Mass after 48 h (kt)"); ax[3].set_ylim(0, 980); ax[3].legend(frameon=False, loc="upper left", fontsize=7.5)
     for a, s in zip(ax, "ABCD"): _panel(a, s)
     fig.tight_layout(); _save(fig, 8)
 
@@ -161,7 +188,7 @@ def fig9():
     ax.barh(y + 0.2, [r["plus"] for r in S], 0.4, color=RED, label="+25%")
     ax.set_yticks(y); ax.set_yticklabels([en.get(r["p"], r["p"]) for r in S]); ax.axvline(0, color="k", lw=0.8)
     lim = max(abs(r["plus"]) for r in S) * 1.25
-    for k, r in enumerate(S): ax.text(lim * 0.98, k, rf"$S_p$ = {r['S']:.2f}", va="center", ha="right", fontsize=8.5)
+    for k, r in enumerate(S): ax.text(lim * 0.98, k, rf"$S_p$ = {r['S']:.2f}", va="center", ha="right", fontsize=7.5)
     ax.set_xlim(-max(abs(r["minus"]) for r in S) * 1.2, lim)
     ax.set_xlabel("Change of the domain-mean near-surface concentration (%)"); ax.legend(frameon=False, loc="lower left")
     fig.tight_layout(); _save(fig, 9)
@@ -184,15 +211,15 @@ def fig10():
     i = int(np.argmin(abs(clon - lo))); j = int(np.argmin(abs(clat - la)))
     c = (pd.Series(P10[:, j, i], index=T) - B["stansiya"][s]["fon_cams"]).loc[A:Bt]
     ax[0].plot(c.index, c.values, "o-", color=BLUE, ms=4, lw=1.5, label="CAMS − background")
-    ax[0].set_ylabel(r"Excess PM$_{10}$ (µg/m$^3$)"); ax[0].legend(frameon=False, fontsize=8.5)
+    ax[0].set_ylabel(r"Excess PM$_{10}$ (µg/m$^3$)"); ax[0].legend(frameon=False, fontsize=7, loc="upper right"); ax[0].set_ylim(0, 1450)
     ax[0].xaxis.set_major_formatter(mdates.DateFormatter("%d %b\n%H:%M")); ax[0].grid(color="#e0e0e0", lw=0.6)
     R = B["nisbat"]
-    ax[1].axhspan(R["obs_min"], R["obs_max"], color="#dcdcdc", label=f"Observed hourly range ({R['obs_min']:.2f}–{R['obs_max']:.2f})")
-    ax[1].axhline(R["obs_med"], color="k", lw=1.2, label=f"Observed median ({R['obs_med']:.2f})")
+    ax[1].axhspan(R["obs_min"], R["obs_max"], color="#dcdcdc", label="Observed range")
+    ax[1].axhline(R["obs_med"], color="k", lw=1.2, label="Observed median")
     for x, (k, col, lab) in enumerate((("mahalliy", RED, "Model"), ("CAMS", BLUE, "CAMS"))):
-        ax[1].plot(x, R[k], "D", color=col, mec="k", ms=10); ax[1].text(x, R[k] + 0.03, f"{R[k]:.2f}", ha="center", weight="bold")
-    ax[1].set_xticks([0, 1]); ax[1].set_xticklabels(["Model", "CAMS"]); ax[1].set_xlim(-0.6, 1.6); ax[1].set_ylim(0, 0.6)
-    ax[1].set_ylabel(r"PM$_{2.5}$ / PM$_{10}$"); ax[1].legend(frameon=False, fontsize=8, loc="upper left")
+        ax[1].plot(x, R[k], "D", color=col, mec="k", ms=10); ax[1].text(x + 0.22, R[k] + 0.06, f"{R[k]:.2f}", ha="left", va="center", weight="bold")
+    ax[1].set_xticks([0, 1]); ax[1].set_xticklabels(["Model", "CAMS"]); ax[1].set_xlim(-0.6, 1.8); ax[1].set_ylim(0, 0.78)
+    ax[1].set_ylabel(r"PM$_{2.5}$ / PM$_{10}$"); ax[1].legend(frameon=False, fontsize=7, loc="upper left")
     _panel(ax[0], "A"); _panel(ax[1], "B"); fig.tight_layout(); _save(fig, 10)
 
 
